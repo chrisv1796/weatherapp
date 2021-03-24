@@ -62,6 +62,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hourly_recycle_view"
         android:layout_width="match_parent"
+        android:background=  "#C0C0C0"
         android:layout_height="175dp"
         android:layout_below="@id/weather_image_view"
         android:layout_marginTop="32dp"

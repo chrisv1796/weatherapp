@@ -36,6 +36,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,13 +47,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.widget.Toast.LENGTH_LONG;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private final String DEGREE_SYMBOL = "\u00B0";
     TextView currentTempTextView, cityNameTextView, humidityTextView, pressureTextView, uvTextView, windSpeedTextView, feelsLikeTextView, weatherDescriptionTextView, visibilityTextView;
     WeatherModelReceiver receiver;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final String TAG = "MyActivity";
-    private ArrayList<Weather> weatherLsit;
+    List<Hour> weatherList;
     LocationDataService locationDataService = new LocationDataService(this, MainActivity.this);
     int LOCATION_REQUEST_CODE = 1001;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
@@ -81,18 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 requestLocationPermission();
             }
         }
-
-        //HARDCODED TO GET IDEA HOW APP WILL LOOK
-        //TODO: Get Real Data From API
-        weatherLsit = new ArrayList<>();
-        weatherLsit.add(new Weather(10, 6, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(15, 7, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(10, 8, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(60, 9, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(80, 10, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(20, 12, R.drawable.cloudy_icon));
-        weatherLsit.add(new Weather(13, 12, R.drawable.cloudy_icon));
-        setAdapter();
     }
 
     public void requestLocationPermission() {
@@ -126,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
                     String latitude = df2.format(location.getLatitude()) + ",";
                     String longitude = df2.format(location.getLongitude()) + "";
                     String latLong = latitude + longitude;
+
+                    getHourDataFromAPI(latLong);
                     getDataFromApi(latLong);
                 } else if (location == null) {
                     Toast.makeText(MainActivity.this, "Location is Null", Toast.LENGTH_SHORT).show();
@@ -161,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         APICall apiCall = retrofit.create(APICall.class);
         Call<WeatherModel> call = apiCall.getWeather((latLong));
-        System.out.println(call.request().url());
         call.enqueue(new Callback<WeatherModel>() {
             @Override
             public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
@@ -184,8 +175,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setAdapter() {
-        WeatherAdapter adapter = new WeatherAdapter(weatherLsit);
+
+    public void getHourDataFromAPI(String latlong) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.weatherapi.com/v1/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        APICall apiCall = retrofit.create(APICall.class);
+        Call<WeatherModel> call = apiCall.getHourDetails(latlong);
+        System.out.println(call.request().url());
+        call.enqueue(new Callback<WeatherModel>() {
+            @Override
+            public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
+                System.out.println("THIS IS THE RESPONSE!!" + response.body());
+                weatherList = response.body().getForecast().getForecastday().get(0).getHour();
+                setAdapter(weatherList);
+            }
+
+            @Override
+            public void onFailure(Call<WeatherModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setAdapter(List<Hour> list) {
+        WeatherAdapter adapter = new WeatherAdapter(list, MainActivity.this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -193,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(String currentTemp, String cityName, String weatherDescription, String feelsLike, String humidity, String pressure, String uv, String windSpeed, String visibility) {
-
         currentTempTextView.setText(currentTemp);
         cityNameTextView.setText(cityName);
         feelsLikeTextView.setText(feelsLike);
@@ -204,6 +218,4 @@ public class MainActivity extends AppCompatActivity {
         windSpeedTextView.setText(windSpeed);
         visibilityTextView.setText(visibility);
     }
-
-
 }

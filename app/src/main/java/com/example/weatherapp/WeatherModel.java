@@ -12,6 +12,9 @@ public class WeatherModel {
     @SerializedName("current")
     @Expose
     private Current current;
+    @SerializedName("forecast")
+    @Expose
+    private Forecast forecast;
 
     public Location getLocation() {
         return location;
@@ -27,6 +30,14 @@ public class WeatherModel {
 
     public void setCurrent(Current current) {
         this.current = current;
+    }
+
+    public Forecast getForecast() {
+        return forecast;
+    }
+
+    public void setForecast(Forecast forecast) {
+        this.forecast = forecast;
     }
 
 }
