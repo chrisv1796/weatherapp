@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="18dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.vilapps_weatherapp.weatherapp.MainActivity">
 
     <TextView
         android:id="@+id/time_text_view"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
+        tools:text="Time"
         android:textSize="28sp"/>
     <ImageView
         android:id="@+id/image_view"
         android:layout_gravity="center"
-        android:layout_width="65dp"
-        android:layout_height="65dp"/>
+        android:layout_width="68dp"
+        android:layout_height="68dp"/>
     <TextView
         android:id="@+id/temp_text_view"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
+        tools:text="temp"
         android:textSize="24sp"/>
 
 </LinearLayout>

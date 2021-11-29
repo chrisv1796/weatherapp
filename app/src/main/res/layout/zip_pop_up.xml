@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C0C0C0"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="16dp"
+        android:padding="18dp"
+        android:text="I understand you being hesitant to share your locaiton! Instead you can just use your zip code!"/>
+
+    <EditText
+        android:id="@+id/zip_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Please Enter Your Zip"
+        android:layout_marginTop="28dp"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:background="@null"
+        android:inputType="text|textNoSuggestions" />
+    <Button
+        android:id="@+id/add_zip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="done"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        app:backgroundTint="@null"
+        android:background="@color/black"/>
+
+</LinearLayout>

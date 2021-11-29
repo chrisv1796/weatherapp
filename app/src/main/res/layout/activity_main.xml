@@ -5,7 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context="com.vilapps_weatherapp.weatherapp.MainActivity">
+
+    <Button
+        android:id="@+id/location_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/location_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:backgroundTint="@null"/>
+    <Button
+        android:id="@+id/map_image_view"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/map"
+        app:backgroundTint="@null"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"/>
+
 
     <ImageView
         android:id="@+id/weather_image_view"
@@ -13,12 +33,13 @@
         android:layout_height="225dp"
         android:src="#808080" />
 
+
     <TextView
         android:id="@+id/tz_id_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="34dp"
         android:lines="1"
         android:text="Miami"
         android:textColor="@color/black"
@@ -31,7 +52,7 @@
         android:layout_marginLeft="28dp"
         android:layout_marginTop="76dp"
         android:textColor="@color/black"
-        android:textSize="100sp"
+        android:textSize="108sp"
         tools:text="15"/>
 
     <LinearLayout
@@ -47,7 +68,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:text="Feels Like"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/feels_like_text_view"
@@ -55,36 +76,122 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/black"
-            android:textSize="36sp"
+            android:textSize="42sp"
             tools:text="15"/>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/hourly_recycle_view"
-        android:layout_width="match_parent"
-        android:background=  "#C0C0C0"
-        android:layout_height="175dp"
-        android:layout_below="@id/weather_image_view"
-        android:layout_marginTop="32dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    <TextView
-        android:id="@+id/current_details_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/hourly_recycle_view"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:padding="15dp"
-        tools:text="Current Details"
-        android:textColor="@color/black"
-        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/current_details_text_view"
+        android:layout_below="@id/weather_image_view"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/hourly_forecast_button"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:text="Hourly"
+            android:textSize="11sp" />
+        <Button
+            android:id="@+id/five_day_forecast_button"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:text="5 Day"
+            android:textSize="11sp" />
+        <Button
+            android:id="@+id/ten_day_forecast_button"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:maxLines="1"
+            android:text="10 Day"
+            android:textSize="11sp" />
+
+
+
+    </LinearLayout>
+
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hourly_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_below="@id/weather_image_view"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <RelativeLayout
+        android:id="@+id/sunrise_sunset_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/hourly_recycle_view">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="58dp">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/sunrise"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/sunrise_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                tools:text="Sunrise" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="58dp">
+
+            <TextView
+                android:id="@+id/sunset_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                tools:text="Sunset"/>
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/sunset" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sunrise_sunset_linear_layout"
         android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="48dp"
         android:orientation="vertical"
         android:padding="18dp">
@@ -123,7 +230,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/current_details_text_view"
+        android:layout_below="@id/sunrise_sunset_linear_layout"
+        android:layout_marginTop="16dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="48dp"
         android:orientation="vertical"
@@ -175,6 +283,20 @@
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/layout_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/current_temp_text_view" />
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-4317081344586319/8457839945" />
 
 
 </RelativeLayout>
