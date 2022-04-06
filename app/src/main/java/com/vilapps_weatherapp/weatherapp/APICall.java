@@ -12,7 +12,6 @@ public interface APICall {
 
 
     @GET("forecast.json?key=a40c463d60c24208a8520443212610&aqi=no&alerts=no")
-    //q=&days&aqi=no&alerts=no"
     Call<WeatherModel> getHourAndAstroDetails(
             @Query("q") String latLong,
             @Query("days") int days

@@ -4,7 +4,9 @@ package com.vilapps_weatherapp.weatherapp;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Hour {
+import java.io.Serializable;
+
+public class Hour implements Serializable {
 
     @SerializedName("time")
     @Expose

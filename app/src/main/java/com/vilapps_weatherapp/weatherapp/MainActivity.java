@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ import com.google.android.gms.tasks.Task;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,7 +56,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DailyWeatherAdapter.OnDailyWeatherClickListener, Serializable {
     private static final DecimalFormat df2 = new DecimalFormat("#.##");
     private static String latLong = "";
     private final String DEGREE_SYMBOL = "\u00B0";
@@ -67,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
     private AlertDialog dialog;
     private RecyclerView recyclerView;
+    private Object DailyWeatherModel;
+    //List for the recyclerView for daily weather Forecast
+    private List<DailyWeatherModel> dailyWeatherForecast = new ArrayList<>();
+    //List to save object to send to other activity
+    private List<DailyWeatherViewModel> dailyWeatherView = new ArrayList<>();
+    int skyBlue = Color.rgb(154, 190, 245);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
         hourlyForecastBttn.setOnClickListener(v -> getHourDataFromAPI(latLong));
 
-        fiveDayForecastBttn.setOnClickListener(v -> getDailyForecastFromApi(latLong, 5));
+        fiveDayForecastBttn.setOnClickListener(v -> getDailyForecastFromApi(latLong, 7));
 
         tenDayForecastBttn.setOnClickListener(v -> getDailyForecastFromApi(latLong, 10));
 
@@ -173,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //PERMISSION GRANTED
@@ -249,14 +259,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setDailyAdapter(List<DailyWeatherModel> list) {
-        DailyWeatherAdapter adapter = new DailyWeatherAdapter(list, MainActivity.this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.swapAdapter(adapter, false);
-        recyclerView.setAdapter(adapter);
-    }
-
     private void setAdapter(List<Hour> list) {
         WeatherAdapter adapter = new WeatherAdapter(list, MainActivity.this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -279,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         windSpeedTextView.setText(windSpeed);
         visibilityTextView.setText(visibility);
         if (isDay == 1) {
-            root.setBackgroundColor(getColor(R.color.sky_blue));
+            root.setBackgroundColor(skyBlue);
             mainImageView.setImageResource(R.drawable.sunny_background);
             mainImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
@@ -324,7 +326,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
                 List<Forecastday> daysForecast = response.body().getForecast().getForecastday();
                 System.out.println("This is the size of daysForecast List" + daysForecast.size());
-                List<DailyWeatherModel> dailyWeatherForecast = new ArrayList<>();
 
                 String date = "";
                 for (int i = 0; i < daysForecast.size(); i++) {
@@ -340,19 +341,31 @@ public class MainActivity extends AppCompatActivity {
                     String precipChance = daysForecast.get(i).getDay().getDailyChanceOfRain() + "%";
                     String weatherIcon = daysForecast.get(1).getDay().getCondition().getIcon();
                     dailyWeatherForecast.add(new DailyWeatherModel(date, highTemp, lowTemp, precipChance, weatherIcon));
-                }
-                setDailyAdapter(dailyWeatherForecast);
+                    //
+                    String cityName = response.body().getLocation().getName();
+                    Double humidity = response.body().getForecast().getForecastday().get(i).getDay().getAvghumidity();
+                    String sunrise = response.body().getForecast().getForecastday().get(i).getAstro().getSunrise();
+                    String sunset = response.body().getForecast().getForecastday().get(i).getAstro().getSunset();
+                    Double windSpeedDir = response.body().getForecast().getForecastday().get(i).getDay().getMaxwindMph();
+                    Double visibilty = response.body().getForecast().getForecastday().get(i).getDay().getAvgvisMiles();
+                    Double uv = response.body().getForecast().getForecastday().get(i).getDay().getUv();
+                    Hour hourlyTemps = response.body().getForecast().getForecastday().get(i).getHour().get(i);
+                    List<Hour> hourTemp = response.body().getForecast().getForecastday().get(i).getHour();
 
-                List<Hour> hourList = response.body().getForecast().getForecastday().get(0).getHour();
-                for (int i = 0; i < hourList.size(); i++ ) {
-                    int willItrain = hourList.get(i).getWillItRain();
-                    List<String> rainyHours = new ArrayList<>();
-                    if (hourList.get(i).getWillItRain() == 1 || hourList.get(i).getWillItRain() == 0) {
-                       String rainyHour =  hourList.get(i).getTime(); //substring(12);
-                        rainyHours.add(rainyHour);
-                    }
-                    System.out.println(rainyHours);
+                    dailyWeatherView.add(new DailyWeatherViewModel(cityName,date,humidity,sunrise,sunset,windSpeedDir,visibilty, uv, hourTemp));
                 }
+                DailyWeatherAdapter adapter = new DailyWeatherAdapter(dailyWeatherForecast, MainActivity.this, MainActivity.this);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.swapAdapter(adapter, false);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast toast;
+                        Toast.makeText(MainActivity.this, "You touched the: ", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -360,5 +373,16 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("this is the message " + t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onDailyWeatherClick(int position) {
+        Intent intent = new Intent(this, DailyWeatherActivity.class);
+        DailyWeatherViewModel dailyWeatherVMObject;
+        dailyWeatherVMObject = dailyWeatherView.get(position);
+        intent.putExtra("DailyWeatherObject", (Serializable) dailyWeatherVMObject);
+
+        startActivity(intent);
+
     }
 }

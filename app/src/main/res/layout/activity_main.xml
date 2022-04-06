@@ -103,7 +103,7 @@
             android:layout_height="42dp"
             android:layout_marginEnd="8dp"
             android:maxLines="1"
-            android:text="5 Day"
+            android:text="1 Week"
             android:textSize="11sp" />
         <Button
             android:id="@+id/ten_day_forecast_button"
@@ -295,7 +295,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
+        ads:adSize="SMART_BANNER"
         ads:adUnitId="ca-app-pub-4317081344586319/8457839945" />
 
 
